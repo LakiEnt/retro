@@ -1,17 +1,16 @@
-// CommonJs
-/**
- * @type {import('fastify').FastifyInstance} Instance of Fastify
- */
+const env = require('dotenv').config()
 const fastify = require('fastify')({
-    logger: true
-  })
-  
-  
-  fastify.listen({ port: 3333 }, function (err, address) {
-    if (err) {
-      fastify.log.error(err)
-      process.exit(1)
-    }
-    // Server is now listening on ${address}
-  })
-  
+  logger: true
+})
+
+fastify.get('/', function (request, reply) {
+  reply.send({ hello: 'world' })
+})
+
+fastify.listen({ port: process.env.H_PORT }, (err, address) => {
+  if (err) throw err;
+  fastify.log.info(`server listening on ${address}`);
+})
+
+
+
