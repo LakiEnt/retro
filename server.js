@@ -1,16 +1,15 @@
+const path = require('path')
 const env = require('dotenv').config()
+const autoload = require('@fastify/autoload')
 const fastify = require('fastify')({
   logger: true
 })
 
-fastify.get('/', function (request, reply) {
-  reply.send({ hello: 'world' })
+fastify.register(autoload, {
+  dir: path.join(__dirname, 'routes')
 })
 
-fastify.listen({ port: process.env.H_PORT }, (err, address) => {
+fastify.listen({ port: process.env.H_PORT}, (err, address) => {
   if (err) throw err;
   fastify.log.info(`server listening on ${address}`);
 })
-
-
-

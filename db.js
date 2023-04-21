@@ -21,6 +21,4 @@ pool.on('remove', client => {
     console.log('Client pool removed')
 })
 
-module.exports = {
-    pool: pool
-}
+module.exports = pool
