@@ -1,8 +1,13 @@
 const path = require('path')
 const env = require('dotenv').config()
 const autoload = require('@fastify/autoload')
+const cors = require('@fastify/cors')
 const fastify = require('fastify')({
   logger: true
+})
+
+fastify.register(cors, { 
+  
 })
 
 fastify.register(autoload, {

@@ -8,6 +8,7 @@
                 <div class="header-item">Главная</div>
                 <div class="header-item">Игры</div>
                 <div class="header-item">Новости</div>
+                <button class="nes-btn is-primary" @click="getGames"> фетч</button>
               </div>
               <div class="right-side"> 
                 <div class="header-item">Войти</div>
@@ -26,8 +27,28 @@
 // import "nes.css/css/nes.min.css";
 
 export default {
-  name: 'IndexPage'
+  name: 'IndexPage',
+  data(){
+    return{
+
+    }
+  },
+  methods:{
+      async getGames(){
+        const request = {
+           "page": 1
+        }
+        try {
+          const response = await this.$axios.post('/api/games/', request);
+          console.log(response)
+        }
+        catch(err) {
+          console.error(err)
+        }
+      }
+  }
 }
+
 </script>
 <style lang="scss" scoped>
 
