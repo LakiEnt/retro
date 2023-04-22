@@ -1,17 +1,20 @@
-// CommonJs
-/**
- * @type {import('fastify').FastifyInstance} Instance of Fastify
- */
+const path = require('path')
+const env = require('dotenv').config()
+const autoload = require('@fastify/autoload')
+const cors = require('@fastify/cors')
 const fastify = require('fastify')({
-    logger: true
-  })
+  logger: true
+})
+
+fastify.register(cors, { 
   
-  
-  fastify.listen({ port: 3030 }, function (err, address) {
-    if (err) {
-      fastify.log.error(err)
-      process.exit(1)
-    }
-    // Server is now listening on ${address}
-  })
-  
+})
+
+fastify.register(autoload, {
+  dir: path.join(__dirname, 'routes')
+})
+
+fastify.listen({ port: process.env.H_PORT}, (err, address) => {
+  if (err) throw err;
+  fastify.log.info(`server listening on ${address}`);
+})
