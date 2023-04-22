@@ -8,7 +8,6 @@
                 <div class="header-item">Главная</div>
                 <div class="header-item">Игры</div>
                 <div class="header-item">Новости</div>
-                <button class="nes-btn is-primary" @click="getGames"> фетч</button>
               </div>
               <div class="right-side"> 
                 <div class="header-item">Войти</div>
@@ -16,7 +15,9 @@
             </div>
 
             <div class="list-games"> 
-
+              <div v-for="game in games" :key="game.id" class="game-container"> 
+                 {{ game.gameName }}
+              </div>
             </div>
         </div>
     </div>
@@ -30,7 +31,7 @@ export default {
   name: 'IndexPage',
   data(){
     return{
-
+      games:[],
     }
   },
   methods:{
@@ -40,12 +41,16 @@ export default {
         }
         try {
           const response = await this.$axios.post('/api/games/', request);
-          console.log(response)
+          this.games= response.data.message.data
+          console.log(response)          
         }
         catch(err) {
           console.error(err)
         }
       }
+  },
+  async created(){
+     await this.getGames()
   }
 }
 
@@ -96,5 +101,8 @@ export default {
   color: white;
   margin: 0 20px 0 20px;
 }
-
+.game-container{
+  width: 200px;
+  height: 200px;
+}
 </style>
