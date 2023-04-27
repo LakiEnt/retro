@@ -5,12 +5,20 @@
         <div class="main-page"> 
             <div class="header"> 
               <div class="left-side"> 
-                <div class="header-item">Главная</div>
+                <div class="nes-text header-item">Главная</div>
                 <div class="header-item">Игры</div>
                 <div class="header-item">Новости</div>
               </div>
               <div class="right-side"> 
-                <div class="header-item">Войти</div>
+                <div class="header-item" @click="dialog = true">Войти</div>
+
+                <v-dialog v-model="dialog">
+                 
+
+                  <v-card>
+                    123123
+                  </v-card>
+                </v-dialog>
               </div>
             </div>
 
@@ -21,17 +29,23 @@
             </div>
         </div>
     </div>
+
+    <v-dialog v-model="dialog">
+        <v-card>
+
+        </v-card>
+    </v-dialog>
   </div>
 </template>
 
 <script>
-// import "nes.css/css/nes.min.css";
 
 export default {
   name: 'IndexPage',
   data(){
     return{
       games:[],
+      dialog: false,
     }
   },
   methods:{
@@ -41,6 +55,7 @@ export default {
         }
         try {
           const response = await this.$axios.post('/api/games/', request);
+          // const response = await this.$api.showGames(request)
           this.games= response.data.message.data
           console.log(response)          
         }
