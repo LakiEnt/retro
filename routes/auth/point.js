@@ -24,6 +24,8 @@ module.exports = function (fastify, opts, next) {
         },
         async handler(request, reply) {
             let data = await job.auth(request.body)
+
+            reply.send(data);
         }
     });
     next();

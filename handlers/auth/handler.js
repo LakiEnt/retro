@@ -17,7 +17,7 @@ async function auth(object) {
 
     try {
         const result = await client.query(query, nickName);
-        if (bcrypt.compareSync(password, result.rows.userPassword)) {
+        if (bcrypt.compareSync(password, result.rows[0].userPassword)) {
             data.message = 'success';
             data.statusCode = 200;
         }
@@ -27,6 +27,8 @@ async function auth(object) {
         client.release();
         console.log('Release client');
     }
+
+    return data;
 }
 
 module.exports = {
