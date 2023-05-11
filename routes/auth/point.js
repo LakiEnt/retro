@@ -2,8 +2,8 @@ const job = require('../../handlers/auth/handler')
 
 module.exports = function (fastify, opts, next) {
     fastify.route({
-        method: 'GET',
-        url: '/',
+        method: 'POST',
+        url: '/login',
         schema: {
             body: {
                 type: 'object',

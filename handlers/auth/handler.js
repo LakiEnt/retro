@@ -8,7 +8,9 @@ async function auth(object) {
     };
 
     const password = object.password;
+    console.log(password);
     const nickName = object.nickName;
+    const params = [ nickName ]
 
     const query = `SELECT u."userPassword" 
                FROM users u
@@ -16,10 +18,14 @@ async function auth(object) {
     const client = await pool.connect();
 
     try {
-        const result = await client.query(query, nickName);
+        const result = await client.query(query, params);
+        console.log(result.rows[0]);
         if (bcrypt.compareSync(password, result.rows[0].userPassword)) {
             data.message = 'success';
             data.statusCode = 200;
+        }
+        else {
+            data.message = 'Wrong password';
         }
     } catch(err) {
         console.error(err.message, err.stack);
@@ -29,8 +35,9 @@ async function auth(object) {
     }
 
     return data;
-}
+};
 
 module.exports = {
-    auth: auth
+    auth: auth,
+    test: test
 }
