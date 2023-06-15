@@ -1,24 +1,72 @@
 <template>
   <div class="body">
-    <div class="container"> 
+    <div class="container">
 
-        <div class="main-page"> 
-            <div class="header"> 
-              <div class="left-side"> 
+        <div class="main-page">
+            <div class="header">
+              <div class="left-side">
                 <div class="header-item">Главная</div>
                 <div class="header-item">Игры</div>
                 <div class="header-item">Новости</div>
               </div>
-              <div class="right-side"> 
-                <div class="header-item">Войти</div>
+              <div class="right-side">
+                <div class="header-item">
+                  <v-btn flat @click="dialog=true">
+                    Войти
+                   </v-btn>
+                </div>
               </div>
             </div>
 
-            <div class="list-games"> 
-              <div v-for="game in games" :key="game.id" class="game-container"> 
+            <div class="list-games">
+              <div v-for="game in games" :key="game.id" class="game-container">
                  {{ game.gameName }}
               </div>
             </div>
+
+            <v-dialog v-model="dialog" width="auto">
+
+              <v-card style="width: 600px; height: 300px;">
+                <v-card-title>
+                  Регистрация
+                </v-card-title>
+
+                <v-card-text>
+                 <v-form>
+                  <v-text-field
+                    v-model="nickname"
+                    :counter="25"
+                    :rules="nicknameRules"
+                    label="Выберите себе никнейм"
+                  ></v-text-field>
+
+                  <v-text-field
+                    v-model="password"
+                    :counter="25"
+                    :rules="nicknameRules"
+                    label="Выберите себе пароль"
+                  >
+
+                  </v-text-field>
+                 </v-form>
+                </v-card-text>
+
+                <v-card-actions>
+                  <v-row>
+                    <v-col cols="3">
+                      <v-btn color="primary" block @click="dialog=false"> Зарегестрироваться</v-btn>
+                    </v-col>
+                    <v-col cols="3" justify="end">
+                      <v-btn color="primary" block @click="dialog=false"> Авторизоваться</v-btn>
+                    </v-col>
+                  </v-row>
+
+                </v-card-actions>
+
+              </v-card>
+            </v-dialog>
+
+
         </div>
     </div>
   </div>
@@ -32,6 +80,7 @@ export default {
   data(){
     return{
       games:[],
+      dialog: false,
     }
   },
   methods:{
@@ -42,7 +91,7 @@ export default {
         try {
           const response = await this.$axios.post('/api/games/', request);
           this.games= response.data.message.data
-          console.log(response)          
+          console.log(response)
         }
         catch(err) {
           console.error(err)
@@ -60,13 +109,12 @@ export default {
 .body{
   margin: 0;
   height: 1145px;
-    
   background: url("../static/main-wallpaper.png") no-repeat fixed;
   position: sticky;
 }
 .container{
   margin: 0 auto;
-  
+
   max-width: 900px;
 }
 .main-page{
@@ -75,7 +123,7 @@ export default {
 
   width: 100%;
   height: 934px;
- 
+
   background: rgba(167, 82, 3, 0.9);
 }
 .header{
