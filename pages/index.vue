@@ -5,16 +5,50 @@
         <div class="main-page">
             <div class="header">
               <div class="left-side">
-                <div class="header-item">Главная</div>
+                <div class="nes-text header-item">Главная</div>
                 <div class="header-item">Игры</div>
                 <div class="header-item">Новости</div>
               </div>
               <div class="right-side">
-                <div class="header-item">
-                  <v-btn flat @click="dialog=true">
-                    Войти
-                   </v-btn>
-                </div>
+                <div class="header-item" @click="dialog = true">Войти</div>
+
+                <v-dialog v-model="dialog" width="auto">
+
+                  <v-card style="width: 600px; height: 300px;">
+                    <v-card-title>
+                      Авторизация
+                    </v-card-title>
+
+                    <v-card-text>
+                      <v-form>
+                        <v-text-field
+                          v-model="nickname"
+                          :counter="25"
+                          label="Никнейм"
+                        ></v-text-field>
+
+                        <v-text-field
+                          v-model="password"
+                          :counter="25"
+                          label="Пароль"
+                        >
+
+                        </v-text-field>
+                      </v-form>
+                    </v-card-text>
+
+                    <v-card-actions>
+                      <v-row>
+                        <v-col cols="3">
+                          <v-btn color="orange" block @click="dialog=false, userLogin()"> Авторизоваться</v-btn>
+                        </v-col>
+
+                      </v-row>
+
+                    </v-card-actions>
+
+                  </v-card>
+                </v-dialog>
               </div>
             </div>
 
@@ -69,11 +103,16 @@
 
         </div>
     </div>
+
+    <v-dialog v-model="dialog">
+        <v-card>
+
+        </v-card>
+    </v-dialog>
   </div>
 </template>
 
 <script>
-// import "nes.css/css/nes.min.css";
 
 export default {
   name: 'IndexPage',
@@ -81,6 +120,8 @@ export default {
     return{
       games:[],
       dialog: false,
+      nickname:'',
+      password:'',
     }
   },
   methods:{
@@ -90,13 +131,28 @@ export default {
         }
         try {
           const response = await this.$axios.post('/api/games/', request);
+          // const response = await this.$api.showGames(request)
           this.games= response.data.message.data
           console.log(response)
         }
         catch(err) {
           console.error(err)
         }
+      },
+
+    async userLogin(){
+      const request = {
+        nickname:this.nickname,
+        password:this.password,
       }
+      try {
+        const response = await this.$axios.post('/api/auth/login', request);
+        console.log(response)
+      }
+      catch(err) {
+        console.error(err)
+      }
+    }
   },
   async created(){
      await this.getGames()
