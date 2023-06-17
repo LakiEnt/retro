@@ -11,103 +11,66 @@
               </div>
               <div class="right-side">
                 <div class="header-item" @click="dialog = true">Войти</div>
-
-                <v-dialog v-model="dialog" width="auto">
-
-                  <v-card style="width: 600px; height: 300px;">
-                    <v-card-title>
-                      Авторизация
-                    </v-card-title>
-
-                    <v-card-text>
-                      <v-form>
-                        <v-text-field
-                          v-model="nickname"
-                          :counter="25"
-                          label="Никнейм"
-                        ></v-text-field>
-
-                        <v-text-field
-                          v-model="password"
-                          :counter="25"
-                          label="Пароль"
-                        >
-
-                        </v-text-field>
-                      </v-form>
-                    </v-card-text>
-
-                    <v-card-actions>
-                      <v-row>
-                        <v-col cols="3">
-                          <v-btn color="orange" block @click="dialog=false, userLogin()"> Авторизоваться</v-btn>
-                        </v-col>
-
-                      </v-row>
-
-                    </v-card-actions>
-
-                  </v-card>
-                </v-dialog>
               </div>
             </div>
 
             <div class="list-games">
               <div v-for="game in games" :key="game.id" class="game-container">
-                 {{ game.gameName }}
-              </div>
-            </div>
 
-            <v-dialog v-model="dialog" width="auto">
-
-              <v-card style="width: 600px; height: 300px;">
-                <v-card-title>
-                  Регистрация
-                </v-card-title>
-
-                <v-card-text>
-                 <v-form>
-                  <v-text-field
-                    v-model="nickname"
-                    :counter="25"
-                    :rules="nicknameRules"
-                    label="Выберите себе никнейм"
-                  ></v-text-field>
-
-                  <v-text-field
-                    v-model="password"
-                    :counter="25"
-                    :rules="nicknameRules"
-                    label="Выберите себе пароль"
+                <div @click="$router.push('game/'+game.gameId)">
+                  <v-img
+                    style="margin-left: 13px; margin-top: 5px"
+                    :src="game.imageURL"
+                    width="150"
+                    height="150"
                   >
 
-                  </v-text-field>
-                 </v-form>
-                </v-card-text>
+                  </v-img>
+                  <div class="mt-3 mb-3 text-center">
+                    {{ game.gameName }}
+                  </div>
+                </div>
 
-                <v-card-actions>
-                  <v-row>
-                    <v-col cols="3">
-                      <v-btn color="primary" block @click="dialog=false"> Зарегестрироваться</v-btn>
-                    </v-col>
-                    <v-col cols="3" justify="end">
-                      <v-btn color="primary" block @click="dialog=false"> Авторизоваться</v-btn>
-                    </v-col>
-                  </v-row>
-
-                </v-card-actions>
-
-              </v-card>
-            </v-dialog>
-
-
+              </div>
+            </div>
         </div>
     </div>
+    <v-dialog v-model="dialog" width="auto">
 
-    <v-dialog v-model="dialog">
-        <v-card>
+      <v-card style="width: 600px; height: 300px;">
+        <v-card-title>
+          Авторизация
+        </v-card-title>
 
-        </v-card>
+        <v-card-text>
+          <v-form>
+            <v-text-field
+              v-model="nickname"
+              :counter="25"
+              label="Никнейм"
+            ></v-text-field>
+
+            <v-text-field
+              v-model="password"
+              :counter="25"
+              label="Пароль"
+            >
+
+            </v-text-field>
+          </v-form>
+        </v-card-text>
+
+        <v-card-actions>
+          <v-row>
+            <v-col cols="3">
+              <v-btn color="orange" block @click="dialog=false, userLogin()"> Авторизоваться</v-btn>
+            </v-col>
+
+          </v-row>
+
+        </v-card-actions>
+
+      </v-card>
     </v-dialog>
   </div>
 </template>
@@ -130,7 +93,7 @@ export default {
            "page": 1
         }
         try {
-          const response = await this.$axios.post('/api/games/', request);
+          const response = await this.$axios.post('/api/games/show', request);
           // const response = await this.$api.showGames(request)
           this.games= response.data.message.data
           console.log(response)
@@ -142,7 +105,7 @@ export default {
 
     async userLogin(){
       const request = {
-        nickname:this.nickname,
+        nickName:this.nickname,
         password:this.password,
       }
       try {
@@ -171,7 +134,7 @@ export default {
 .container{
   margin: 0 auto;
 
-  max-width: 900px;
+  max-width: 905px;
 }
 .main-page{
   position: relative;
@@ -205,8 +168,20 @@ export default {
   color: white;
   margin: 0 20px 0 20px;
 }
+.list-games{
+  display: flex;
+  flex-wrap: wrap;
+}
 .game-container{
+
   width: 200px;
   height: 200px;
+
+  padding: 10px;
+  margin: 10px;
+}
+.game-container:hover{
+  background-color: rgba(0, 0, 0, 0.25);
+  cursor: pointer;
 }
 </style>
