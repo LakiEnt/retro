@@ -4,29 +4,34 @@ const pool = require('../../db.js');
 const mailer = require('../../utils/mailer');
 
 async function auth(object) {
-    const data = {
-        message:    'ERROR',
-        statusCode: 400,
-    };
+  const data = {
+      message:    'ERROR',
+      statusCode: 400,
+  };
 
-    const password = object.password;
-    const nickName = object.nickName;
-    const params = [ nickName ];
+  const password = object.password;
+  const nickName = object.nickName;
+  const params = [ nickName ];
 
-    const query = `SELECT u."userPassword"
-               FROM users u
-               WHERE u."userNickName" = $1` ;
-    const client = await pool.connect();
+  const client = await pool.connect();
 
     try {
-        const result = await client.query(query, params);
-        if (bcrypt.compare(password, result.rows[0].userPassword)) {
-            data.message = 'success';
-            data.statusCode = 200;
-        }
-        else {
-            data.message = 'Wrong password';
-        }
+      const query = `SELECT u."userPassword"
+               FROM users u
+               WHERE u."userNickName" = $1` ;
+      const result = await client.query(query, params);
+
+      const isSuccess = await bcrypt.compare(password, result.rows[0].userPassword).then(function(result) {
+        console.log(result)
+        return result;
+      });
+      if (isSuccess) {
+          data.message = 'success';
+          data.statusCode = 200;
+      }
+      else {
+          data.message = 'Wrong password';
+      }
     } catch(err) {
         console.error(err.message, err.stack);
     } finally {

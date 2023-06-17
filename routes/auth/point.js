@@ -13,13 +13,6 @@ module.exports = function (fastify, opts, next) {
                 }
             },
             response: {
-                200: {
-                    type:       'object',
-                    properties: {
-                        message:    { type: 'string' },
-                        statusCode: { type: 'integer' },
-                    }
-                },
                 400: {
                     type:       'object',
                     properties: {

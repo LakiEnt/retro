@@ -12,29 +12,6 @@ module.exports = function (fastify, opts, next) {
                 }
             },
             response: {
-                200: {
-                    type: 'object',
-                    properties: {
-                        message: {
-                            type: 'object',
-                            properties: {
-                                data: {
-                                    type: 'array',
-                                    items: {
-                                        type: 'object',
-                                        properties: {
-                                            gameId:             { type: 'integer' },
-                                            gameName:           { type: 'string' },
-                                            gameDate:           { type: 'string' },
-                                            gameDescription:    { type: 'string' },
-                                        }
-                                    }
-                                }
-                            }
-                        },
-                        statusCode: { type: 'integer' }
-                    }
-                },
                 400: {
                     type:       'object',
                     properties: {
