@@ -36,7 +36,7 @@ async function showGames(object) {
         console.log(`Жанры для игры ${ game.gameName } (${ game.gameId }) не найдены`);
       }
     }
-    data.message = { data: result.rows };
+    data.message = result.rows;
     data.statusCode = 200;
   } catch(err) {
       console.error(err.message, err.stack);
@@ -115,7 +115,53 @@ async function addGame(object) {
   return data;
 }
 
+async function showGame(object) {
+  const data = {
+    message:    'ERROR',
+    statusCode: 400,
+  };
+
+  const client = await pool.connect();
+  try {
+    const query = `SELECT g."gameId", g."gameName", g."gameDate", g."gameDescription", g."imageURL"
+                   FROM games g
+                   WHERE g."gameId" = $1
+                   ORDER BY g."gameName"`;
+
+    const result = await client.query(query, [ object.gameId ]);
+    if (result.rowCount > 0) {
+      result.rows[0].genres = [];
+      const getGenres = await client.query(`SELECT gg."genreId"
+                                          FROM games_genres gg
+                                          WHERE "gameId" = $1`, [ result.rows[0].gameId ]);
+      if (getGenres.rowCount > 0) {
+        for (const genre of getGenres.rows) {
+          if (genre.genreId in constants.gameGenres) {
+            result.rows[0].genres.push(constants.gameGenres[genre.genreId]);
+          }
+        }
+      }
+      else {
+        console.log(`Жанры для игры ${ result.rows[0].gameName } (${ result.rows[0].gameId }) не найдены`);
+      }
+      data.message = result.rows[0];
+      data.statusCode = 200;
+    }
+    else {
+      console.log(`Игра (id: ${ object.gameId }) не найдена`);
+      data.message = `Игра (id: ${ object.gameId }) не найдена`;
+    }
+  } catch(err) {
+    console.error(err.message, err.stack);
+  } finally {
+    client.release();
+    console.log('Release client');
+  }
+  return data;
+}
+
 module.exports = {
-    showGames: showGames,
-    addGame:   addGame,
+  showGames: showGames,
+  addGame:   addGame,
+  showGame:  showGame,
 }
