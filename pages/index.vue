@@ -15,7 +15,7 @@
             </div>
 
             <div class="list-games">
-              <div v-for="game in games" :key="game.id" class="game-container">
+              <div v-for="game in games" :key="game.gameId" class="game-container">
 
                 <div @click="$router.push('game/'+game.gameId)">
                   <v-img
@@ -95,8 +95,8 @@ export default {
         try {
           const response = await this.$axios.post('/api/games/show', request);
           // const response = await this.$api.showGames(request)
-          this.games= response.data.message.data
-          console.log(response)
+          this.games = response.data.message
+          console.log(response.data.message)
         }
         catch(err) {
           console.error(err)

@@ -7,7 +7,7 @@
 
 <script>
 export default {
-  name: "_id",
+  name: "gameID",
   data(){
     return{
       game:{},
@@ -16,12 +16,12 @@ export default {
   methods:{
     async getGame(){
       const request = {
-        "id": this.$route.params.id
+        "gameId": this.$route.params.id
       }
       try {
-        const response = await this.$axios.post('/api/games/show', request);
+        const response = await this.$axios.post('/api/games/showGame', request);
 
-        this.game = response.data.message.data
+        this.game = response.data.message
         console.log(response)
       }
       catch(err) {
