@@ -38,11 +38,16 @@ module.exports = function (fastify, opts, next) {
       body: {
         type: 'object',
         properties: {
-            name:        { type: 'string' },
-            date:        { type: 'string' },
-            description: { type: 'string' },
-            imageURL:    { type: 'string' },
+          name:        { type: 'string' },
+          date:        { type: 'string' },
+          description: { type: 'string' },
+          imageURL:    { type: 'string' },
+          genres:       {
+            type:  'array',
+            items: { type: 'string' },
+          },
         },
+        required: [ 'name', 'date', 'description', 'genres' ],
       },
       response: {
         400: {
