@@ -1,7 +1,55 @@
 <template>
 <div>
-  <h1>ВООБЩЕ ДРУГАЯ СТРАНИЦА {{game.gameName}}</h1>
-  {{game}}
+  <v-row style="margin-top:40px">
+
+    <v-col style="margin-left: 40px">
+      <div>
+        <v-img :src="game.imageURL" width="300" height="300" style="border:3px solid #000"></v-img>
+      </div>
+      <div class="ma-1 mt-5">
+        {{game.gameName}}
+      </div>
+    </v-col>
+
+    <v-col>
+      <div class="flex flex-column">
+        <div class="pa-1 mt-3">
+          <strong> Название: </strong> {{game.gameName}}
+        </div>
+        <div class="pa-1 mt-3">
+          <strong> Дата выпуска: </strong>  {{game.gameDate}}
+        </div>
+        <div class="pa-1 mt-3">
+
+          <div v-if="!gameDescriptionOpen">
+            <strong> Описание: </strong>  {{gameDescription}}...
+            <br/>
+            <strong style="text-decoration: underline" @click="gameDescriptionOpen = true"> Нажмите чтобы раскрыть</strong>
+          </div>
+
+          <div v-else>
+            <strong> Описание: </strong>  {{game.gameDescription}}
+            <br/>
+            <strong style="text-decoration: underline" @click="gameDescriptionOpen = false"> Нажмите чтобы скрыть</strong>
+          </div>
+
+        </div>
+        <div class="pa-1 mt-3">
+          <strong> Жанры: </strong>
+          <span v-for="genre in gameGenres">
+            {{genre}}
+          </span>
+        </div>
+      </div>
+    </v-col>
+
+  </v-row>
+
+  <v-row>
+    <v-col>
+      <h1>ТУТ БУДУТ СПИДРАНЫ (или были?)</h1>
+    </v-col>
+  </v-row>
 </div>
 </template>
 
@@ -11,6 +59,10 @@ export default {
   data(){
     return{
       game:{},
+      gameDescription:'',
+      gameDescriptionOpen: false,
+      gameGenres:[],
+
     }
   },
   methods:{
@@ -22,6 +74,14 @@ export default {
         const response = await this.$axios.post('/api/games/showGame', request);
 
         this.game = response.data.message
+        this.gameDescription = this.game.gameDescription.slice(0,125)
+        this.gameGenres = this.game.genres
+
+        for(let genre in this.gameGenres) {
+          this.gameGenres[genre] = this.gameGenres[genre] + ', '
+        }
+        // this.gameGenres.at(-1).slice(0,-2).concat('.') Добавить точку в конец
+
         console.log(response)
       }
       catch(err) {

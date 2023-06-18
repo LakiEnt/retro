@@ -4,7 +4,7 @@ export default {
   // Global page headers: https://go.nuxtjs.dev/config-head
   head: {
     titleTemplate: '%s - retro',
-    title: 'retro',
+    title: 'Retro Speedrun - сайт для спидранов ретро игр!',
     htmlAttrs: {
       lang: 'en'
     },
@@ -15,7 +15,7 @@ export default {
       { name: 'format-detection', content: 'telephone=no' }
     ],
     link: [
-      { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }
+      { rel: 'icon', type: 'image/x-icon', href: '/heart.jpg' }
     ]
   },
 
