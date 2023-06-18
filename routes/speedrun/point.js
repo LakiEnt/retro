@@ -10,7 +10,8 @@ module.exports = function (fastify, opts, next) {
         properties: {
           page:   { type: 'integer' },
           gameId: { type: 'integer' }
-        }
+        },
+        required: [ 'page', 'gameId' ]
       },
       response: {
         400: {
