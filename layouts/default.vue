@@ -206,7 +206,7 @@ export default {
 <style lang="scss">
 .body{
   margin: 0;
-  height: 1920px;
+  height: 1962px;
   background: url("../static/main-wallpaper.png") no-repeat fixed;
   background-size:cover;
   position: sticky;
@@ -221,7 +221,7 @@ export default {
   top:200px;
 
   width: 100%;
-
+  min-height: 1500px;
   background: rgba(167, 82, 3, 0.9);
 }
 .header{

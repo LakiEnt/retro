@@ -48,41 +48,55 @@
   <v-row class="pa-10">
     <v-col>
       <h1>Спидраны по игре:</h1>
-      <v-table
 
+      <v-pagination
+        v-model="page"
+        :length="5"
+        @input="updatePage"
       >
-        <thead>
-        <tr>
-          <th class="text-center mr-5">
-            Никнейм игрока
-          </th>
-          <th class="text-center mr-5">
-            Время спидрана
-          </th>
-          <th class="text-center mr-5">
-            Когда был опубликован спидран
-          </th>
-          <th class="text-center mr-5">
-            Страна
-          </th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr
-          v-for="speedrun in speedruns"
-          :key="speedrun.name"
+      </v-pagination>
+
+      <v-data-table
+        :headers="headers"
+        :items="speedruns"
+        :items-per-page="20"
+        hide-default-footer
+        class="elevation-1"
+      >
+        <template
+          v-slot:body="{ items }"
         >
-          <td>{{ speedrun.userNickName }}</td>
-          <td>{{ speedrun.speedrunTime }}</td>
-          <td>{{ speedrun.speedrunDate }}</td>
-          <td>{{ speedrun.userCountry }}</td>
+          <tbody>
+          <tr
+            v-for="speedrun in items"
+            :key="speedrun.speedrunId"
+            @click="dialog = true,videoURL = speedrun.speedrunUrl"
+          >
+            <td>{{speedrun.userNickName}}</td>
+            <td>{{speedrun.speedrunTime}}</td>
+            <td>{{speedrun.speedrunDate}}</td>
+            <td>{{speedrun.userCountry}}</td>
 
-        </tr>
-        </tbody>
+          </tr>
+          </tbody>
+        </template>
+      </v-data-table>
 
-      </v-table>
+      <v-pagination
+        v-model="page"
+        :length="5"
+        @input="updatePage"
+      >
+      </v-pagination>
     </v-col>
   </v-row>
+  <v-dialog v-model="dialog">
+    <v-card>
+      <div>
+        <iframe width="560" height="315" :src=videoURL title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+      </div>
+    </v-card>
+  </v-dialog>
 </div>
 </template>
 
@@ -94,9 +108,29 @@ export default {
       game:{},
       gameDescription:'',
       gameDescriptionOpen: false,
+      videoURL:'',
+      dialog:false,
       gameGenres:[],
       page:1,
       speedruns:[],
+      headers:[
+        {
+          text: 'Никнейм игрока',
+          value: 'userNickName',
+        },
+        {
+          text: 'Время прохождения',
+          value: 'speedrunTime',
+        },
+        {
+          text: 'Когда выложили спидран',
+          value: 'speedrunDate',
+        },
+        {
+          text: 'Страна',
+          value: 'userCountry',
+        },
+      ],
     }
   },
   methods:{
@@ -124,7 +158,7 @@ export default {
     async getGameSpeedrun(){
       const request = {
         "gameId": this.$route.params.id,
-        'page': 1
+        'page': this.page
       }
       try {
 
@@ -133,12 +167,14 @@ export default {
         this.speedruns = response.data.message
 
         console.log(response)
-        console.log(this.speedrun)
       }
       catch(err) {
         console.error(err)
       }
     },
+    async updatePage(){
+      await this.getGameSpeedrun()
+    }
 
   },
   async created(){
