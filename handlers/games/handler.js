@@ -6,7 +6,7 @@ async function showGames(object) {
       message:    'ERROR',
       statusCode: 400,
   };
-  const limit = 10;
+  const limit = 16;
   let page = object.page || 1;
   let offset = page * limit - limit;
   let params = [ limit, offset ];
@@ -14,7 +14,7 @@ async function showGames(object) {
 
   const client = await pool.connect();
   try {
-    const query = `SELECT g."gameId", g."gameName", g."gameDate", g."gameDescription", g."imageURL"
+    const query = `SELECT g."gameId", g."gameName", to_char(g."gameDate", 'dd.mm.yyyy') AS "gameDate", g."gameDescription", g."imageURL"
                    FROM games g
                    ORDER BY g."gameName"
                    LIMIT $1 OFFSET $2`;
