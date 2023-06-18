@@ -106,15 +106,8 @@ export default {
       const request = {
         "gameId": this.$route.params.id
       }
-      const requestSpeedrun = {
-        "gameId": this.$route.params.id,
-        'page': 1
-      }
       try {
         const response = await this.$axios.post('/api/games/showGame', request);
-        const responseSpeedrun = await this.$axios.post('/api/speedrun/show', requestSpeedrun);
-
-        this.speedrun = responseSpeedrun.data.message
 
         this.game = response.data.message
         this.gameDescription = this.game.gameDescription.slice(0,125)
@@ -125,7 +118,23 @@ export default {
         }
         // this.gameGenres.at(-1).slice(0,-2).concat('.') Добавить точку в конец
         console.log(response)
-        console.log(responseSpeedrun)
+      }
+      catch(err) {
+        console.error(err)
+      }
+    },
+    async getGameSpeedrun(){
+      const request = {
+        "gameId": this.$route.params.id,
+        'page': 1
+      }
+      try {
+
+        const response = await this.$axios.post('/api/speedrun/show', request);
+
+        this.speedrun = response.data.message
+
+        console.log(response)
       }
       catch(err) {
         console.error(err)
@@ -135,6 +144,7 @@ export default {
   },
   async created(){
     await this.getGame()
+    await  this.getGameSpeedrun()
   }
 }
 

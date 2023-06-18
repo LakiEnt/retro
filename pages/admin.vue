@@ -1,6 +1,9 @@
 <template>
 <div>
-  admin
+  <h1 style="padding:20px;">Админская панель</h1>
+  <div>
+
+  </div>
 </div>
 </template>
 
