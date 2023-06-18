@@ -123,7 +123,7 @@ async function showGame(object) {
 
   const client = await pool.connect();
   try {
-    const query = `SELECT g."gameId", g."gameName", g."gameDate", g."gameDescription", g."imageURL"
+    const query = `SELECT g."gameId", g."gameName", to_char(g."gameDate", 'dd.mm.yyyy') AS "gameDate", g."gameDescription", g."imageURL"
                    FROM games g
                    WHERE g."gameId" = $1
                    ORDER BY g."gameName"`;
