@@ -21,7 +21,7 @@ exports.up = pgm => {
             notNull: true,
         },
         speedrunTime: {
-            type: 'bigserial',
+            type: 'bigint',
             notNull: true,
         },
         speedrunUrl: {

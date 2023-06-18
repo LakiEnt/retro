@@ -13,7 +13,10 @@ async  function showSpeedruns(object) {
 
   const client = await pool.connect();
   try {
-    const query = `SELECT u."userNickName", s."speedrunTime", s."speedrunDate", u."userCountry"
+    const query = `SELECT u."userNickName",
+                          s."speedrunTime",
+                          to_char(TO_TIMESTAMP(s."speedrunDate"::double precision / 1000), 'HH24:MI:SS.MS') AS "speedrunDate",
+                          u."userCountry"
                    FROM speedruns s
                           INNER JOIN users u on u."userId" = s."speedrunUser"
                           INNER JOIN games g on g."gameId" = s."speedrunGame"
