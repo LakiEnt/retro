@@ -48,6 +48,14 @@
   <v-row>
     <v-col>
       <h1>ТУТ БУДУТ СПИДРАНЫ (или были?)</h1>
+      <v-data-table
+        :headers="headers"
+        :items-per-page="25"
+        fixed-header
+        hide-default-footer
+      >
+
+      </v-data-table>
     </v-col>
   </v-row>
 </div>
@@ -62,6 +70,33 @@ export default {
       gameDescription:'',
       gameDescriptionOpen: false,
       gameGenres:[],
+      page:1,
+      headers:[
+        {
+          align: 'start',
+          key: 'name',
+          sortable: false,
+          title: 'Никнейм игрока',
+        },
+        {
+          align: 'start',
+          key: 'time',
+          sortable: false,
+          title: 'Время спидрана',
+        },
+        {
+          align: 'start',
+          key: 'date',
+          sortable: false,
+          title: 'Когда был опубликован',
+        },
+        {
+          align: 'start',
+          key: 'country',
+          sortable: false,
+          title: 'Страна',
+        },
+      ],
     }
   },
   methods:{
