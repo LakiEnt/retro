@@ -62,7 +62,6 @@ export default {
       gameDescription:'',
       gameDescriptionOpen: false,
       gameGenres:[],
-
     }
   },
   methods:{
@@ -81,7 +80,6 @@ export default {
           this.gameGenres[genre] = this.gameGenres[genre] + ', '
         }
         // this.gameGenres.at(-1).slice(0,-2).concat('.') Добавить точку в конец
-
         console.log(response)
       }
       catch(err) {

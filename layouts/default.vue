@@ -18,41 +18,132 @@
           </div>
         </div>
         <v-dialog v-model="dialog" width="auto">
+          <v-window
+            v-model="window"
+          >
 
-          <v-card style="width: 600px; height: 300px;">
-            <v-card-title>
-              Авторизация
-            </v-card-title>
+            <v-window-item>
+              <v-card style="width: 600px; padding: 20px">
+                <v-card-title>
+                  Авторизация
+                </v-card-title>
 
-            <v-card-text>
-              <v-form>
-                <v-text-field
-                  v-model="nickname"
-                  :counter="25"
-                  label="Никнейм"
-                ></v-text-field>
+                <v-card-text>
+                  <v-form>
+                    <v-text-field
+                      v-model="nickname"
+                      :counter="25"
+                      label="Никнейм"
+                    ></v-text-field>
 
-                <v-text-field
-                  v-model="password"
-                  :counter="25"
-                  label="Пароль"
-                >
+                    <v-text-field
+                      v-model="password"
+                      :counter="25"
+                      label="Пароль"
+                    >
 
-                </v-text-field>
-              </v-form>
-            </v-card-text>
+                    </v-text-field>
+                  </v-form>
+                </v-card-text>
 
-            <v-card-actions>
-              <v-row>
-                <v-col cols="3">
-                  <v-btn color="orange" block @click="dialog=false, userLogin()"> Авторизоваться</v-btn>
-                </v-col>
+                <v-card-actions>
+                  <v-row class="justify-center">
+                    <v-col cols="4">
+                      <v-btn
+                        color="orange"
+                        @click="dialog=false, userLogin()"
+                      >
+                        Авторизоваться
+                      </v-btn>
+                    </v-col>
 
-              </v-row>
+                    <v-col cols="8" class="left-side align-center">
+                      <div>
+                        Хотите <a
+                        style="  color: orange;text-decoration: underline;"
+                        @click="window = 1"
+                      >
+                        создать аккаунт?
+                      </a>
+                      </div>
+                    </v-col>
+                  </v-row>
 
-            </v-card-actions>
 
-          </v-card>
+
+                </v-card-actions>
+
+              </v-card>
+            </v-window-item>
+
+            <v-window-item>
+              <v-card style="width: 600px; padding: 20px">
+                <v-card-title>
+                  Регистрация
+                </v-card-title>
+
+                <v-card-text>
+                  <v-form>
+                    <v-text-field
+                      v-model="nickname"
+                      :counter="25"
+                      label="Придумайте никнейм"
+                    ></v-text-field>
+
+                    <v-text-field
+                      v-model="password"
+                      :counter="25"
+                      label="Придумайте пароль"
+                    >
+
+                    </v-text-field>
+
+                    <v-text-field
+                      v-model="passwordConfirm"
+                      :counter="25"
+                      label="Повторите пароль"
+                    >
+
+                    </v-text-field>
+
+                    <v-text-field
+                      v-model="email"
+                      :counter="25"
+                      label="Введите свою почту"
+                    >
+
+                    </v-text-field>
+
+                    <v-text-field
+                      v-model="country"
+                      :counter="25"
+                      label="Введите свою страну"
+                    >
+
+                    </v-text-field>
+                  </v-form>
+                </v-card-text>
+
+                <v-card-actions>
+                  <v-row class="justify-center">
+                    <v-col cols="4">
+                      <v-btn
+                        color="orange"
+                        @click="dialog=false, window=0, userRegistration()"
+                      >
+                        Зарегестрироваться
+                      </v-btn>
+                    </v-col>
+                  </v-row>
+
+
+
+                </v-card-actions>
+
+              </v-card>
+            </v-window-item>
+          </v-window>
+
         </v-dialog>
       </div>
     </v-main>
@@ -65,8 +156,12 @@ export default {
   data () {
     return {
       dialog: false,
+      window:0,
       nickname:'',
       password:'',
+      passwordConfirm:'',
+      email:'',
+      country:'',
     }
   },
   methods:{
@@ -81,6 +176,28 @@ export default {
       }
       catch(err) {
         console.error(err)
+      }
+    },
+    async userRegistration(){
+      const request = {
+        userNickName:  this.nickname,
+        userPassword:  this.password,
+        userEmail:     this.email,
+        userCountry:   this.country,
+      }
+      try {
+        const response = await this.$axios.post('/api/auth/register', request);
+        console.log(response)
+      }
+      catch(err) {
+        console.error(err)
+      }
+    }
+  },
+  watch:{
+    dialog:function(dialog, old){
+      if(!this.dialog){
+        this.window = 0
       }
     }
   }
