@@ -17,7 +17,8 @@ async  function showSpeedruns(object) {
                           u."userNickName",
                           to_char(TO_TIMESTAMP(s."speedrunTime"::double precision / 1000), 'HH24:MI:SS.MS') AS "speedrunTime",
                           to_char(s."speedrunDate", 'dd.mm.yyyy')                                           AS "speedrunDate",
-                          u."userCountry"
+                          u."userCountry",
+                          s."speedrunUrl"
                    FROM speedruns s
                           INNER JOIN users u on u."userId" = s."speedrunUser"
                           INNER JOIN games g on g."gameId" = s."speedrunGame"

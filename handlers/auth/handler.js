@@ -1,7 +1,7 @@
 const bcrypt = require('bcrypt');
 const crypto = require('crypto');
 const pool = require('../../db.js');
-const mailer = require('../../utils/mailer');
+const mailer = require('../../services/mailer');
 
 async function auth(object) {
   const data = {
@@ -53,7 +53,7 @@ async function register (object) {
           if (err) {
             console.log('Ошибка при хэшировании пароля');
             reject(err)
-          };
+          }
           resolve(hash);
         });
     });
