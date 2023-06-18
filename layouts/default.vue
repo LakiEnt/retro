@@ -206,13 +206,14 @@ export default {
 <style lang="scss">
 .body{
   margin: 0;
-  height: 1145px;
+  height: 1920px;
   background: url("../static/main-wallpaper.png") no-repeat fixed;
+  background-size:cover;
   position: sticky;
 }
 .container{
   margin: 0 auto;
-
+  height: 100%;
   max-width: 905px;
 }
 .main-page{
@@ -220,7 +221,6 @@ export default {
   top:200px;
 
   width: 100%;
-  height: 934px;
 
   background: rgba(167, 82, 3, 0.9);
 }

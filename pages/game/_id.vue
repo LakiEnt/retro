@@ -48,15 +48,39 @@
   <v-row class="pa-10">
     <v-col>
       <h1>Спидраны по игре:</h1>
-      <v-data-table
-        :item="speedrun"
-        :headers="headers"
-        :items-per-page="25"
-        fixed-header
-        hide-default-footer
-      >
+      <v-table
 
-      </v-data-table>
+      >
+        <thead>
+        <tr>
+          <th class="text-center mr-5">
+            Никнейм игрока
+          </th>
+          <th class="text-center mr-5">
+            Время спидрана
+          </th>
+          <th class="text-center mr-5">
+            Когда был опубликован спидран
+          </th>
+          <th class="text-center mr-5">
+            Страна
+          </th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr
+          v-for="speedrun in speedruns"
+          :key="speedrun.name"
+        >
+          <td>{{ speedrun.userNickName }}</td>
+          <td>{{ speedrun.speedrunTime }}</td>
+          <td>{{ speedrun.speedrunDate }}</td>
+          <td>{{ speedrun.userCountry }}</td>
+
+        </tr>
+        </tbody>
+
+      </v-table>
     </v-col>
   </v-row>
 </div>
@@ -72,33 +96,7 @@ export default {
       gameDescriptionOpen: false,
       gameGenres:[],
       page:1,
-      speedrun:[],
-      headers:[
-        {
-          align: 'start',
-          key: 'name',
-          sortable: false,
-          title: 'Никнейм игрока',
-        },
-        {
-          align: 'start',
-          key: 'time',
-          sortable: false,
-          title: 'Время спидрана',
-        },
-        {
-          align: 'start',
-          key: 'date',
-          sortable: false,
-          title: 'Когда был опубликован',
-        },
-        {
-          align: 'start',
-          key: 'country',
-          sortable: false,
-          title: 'Страна',
-        },
-      ],
+      speedruns:[],
     }
   },
   methods:{
@@ -132,9 +130,10 @@ export default {
 
         const response = await this.$axios.post('/api/speedrun/show', request);
 
-        this.speedrun = response.data.message
+        this.speedruns = response.data.message
 
         console.log(response)
+        console.log(this.speedrun)
       }
       catch(err) {
         console.error(err)
