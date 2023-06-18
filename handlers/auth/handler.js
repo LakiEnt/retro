@@ -53,7 +53,7 @@ async function register (object) {
           if (err) {
             console.log('Ошибка при хэшировании пароля');
             reject(err)
-          };
+          }
           resolve(hash);
         });
     });
