@@ -2,7 +2,7 @@
 <div>
   <v-row style="margin-top:40px">
 
-    <v-col style="margin-left: 40px">
+    <v-col cols="auto" style="padding-left: 40px">
       <div>
         <v-img :src="game.imageURL" width="300" height="300" style="border:3px solid #000"></v-img>
       </div>
@@ -11,7 +11,7 @@
       </div>
     </v-col>
 
-    <v-col>
+    <v-col cols="6" sm="12" xs="12"  style="padding-left: 40px">
       <div class="flex flex-column">
         <div class="pa-1 mt-3">
           <strong> Название: </strong> {{game.gameName}}
@@ -70,7 +70,7 @@
           <tr
             v-for="speedrun in items"
             :key="speedrun.speedrunId"
-            @click="dialog = true,videoURL = speedrun.speedrunUrl"
+            @click="dialog = true,videoURL = speedrun.speedrunUrl,user= speedrun.userNickName, country = speedrun.userCountry, date = speedrun.speedrunDate, time = speedrun.speedrunTime"
           >
             <td>{{speedrun.userNickName}}</td>
             <td>{{speedrun.speedrunTime}}</td>
@@ -90,11 +90,34 @@
       </v-pagination>
     </v-col>
   </v-row>
-  <v-dialog v-model="dialog">
-    <v-card>
-      <div>
-        <iframe width="560" height="315" :src=videoURL title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
-      </div>
+  <v-dialog v-model="dialog" max-width='900'>
+    <v-card class="pa-10">
+
+      <v-row>
+        <v-col cols="auto" >
+          <div>
+            <h2>Видео:</h2>
+            <iframe width="300" height="300" :src=videoURL title="Speedrun"  frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+          </div>
+        </v-col>
+
+        <v-col class="ml-10 pl-10" cols="auto" >
+          <div>
+            <h2>Информация о спидране:</h2>
+            <v-row>
+
+              <v-col>
+                <div class="mt-3">Кто прошел: {{user}}</div>
+                <div class="mt-3">Время прохождения: {{time}}</div>
+                <div class="mt-3">Когда загружен: {{date}}</div>
+                <div class="mt-3">Страна игрока: {{country}}</div>
+              </v-col>
+            </v-row>
+          </div>
+        </v-col>
+      </v-row>
+
+
     </v-card>
   </v-dialog>
 </div>
@@ -109,6 +132,10 @@ export default {
       gameDescription:'',
       gameDescriptionOpen: false,
       videoURL:'',
+      user:'',
+      time:'',
+      date:'',
+      country:'',
       dialog:false,
       gameGenres:[],
       page:1,
@@ -176,6 +203,13 @@ export default {
       await this.getGameSpeedrun()
     }
 
+  },
+  watch:{
+    dialog:function(dialog, old){
+      if(!this.dialog){
+        this.videoURL = '';
+      }
+    }
   },
   async created(){
     await this.getGame()
