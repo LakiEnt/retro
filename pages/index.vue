@@ -32,6 +32,13 @@
       </div>
     </div>
 
+    <v-pagination
+      v-model="page"
+      :length="5"
+      @input="updatePage"
+    >
+
+    </v-pagination>
   </div>
 
 
