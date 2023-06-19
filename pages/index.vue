@@ -108,6 +108,7 @@ export default {
 .list-games{
   display: flex;
   flex-wrap: wrap;
+  justify-content: center;
 }
 .game-container{
 

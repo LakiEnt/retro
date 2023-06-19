@@ -12,7 +12,11 @@
       </div>
     </v-col>
 
-    <v-col v-if="isAutorise" cols="auto" class="addSpeedrun">
+<!--    <v-col v-if="isAutorise" cols="auto" class="addSpeedrun">-->
+<!--      <button type="button" class="nes-pointer nes-btn is-warning" @click="dialogAddGame = true">Добавить спидран + </button>-->
+<!--    </v-col>-->
+
+    <v-col cols="auto" class="addSpeedrun">
       <button type="button" class="nes-pointer nes-btn is-warning" @click="dialogAddGame = true">Добавить спидран + </button>
     </v-col>
 

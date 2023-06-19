@@ -14,14 +14,14 @@
                 <div class="nes-pointer is-warning  nes-btn" @click="$router.push('/main')">Главная</div>
                 <div class="nes-pointer is-warning  nes-btn" @click="$router.push('/')">Игры</div>
 
+                <div class="nes-pointer is-warning nes-btn" style="margin-right:40px" @click="dialog = true">Войти</div>
 
+<!--                <div v-if="!isAutorise" class="nes-pointer is-warning nes-btn" style="margin-right:40px" @click="dialog = true">Войти</div>-->
 
-                <div v-if="!isAutorise" class="nes-pointer is-warning nes-btn" style="margin-right:40px" @click="dialog = true">Войти</div>
-
-                <div v-if="isAutorise" class="header-item">
-                  <img src="~static/jokerge.webp" width="60" height="60" class="pb-4">
-                  <div class="nes-pointer is-warning nes-btn" style="height: 40px; position: relative;top: -4px;" @click="userExit(),$router.go()">Выйти</div>
-                </div>
+<!--                <div v-if="isAutorise" class="header-item">-->
+<!--                  <img src="~static/jokerge.webp" width="60" height="60" class="pb-4">-->
+<!--                  <div class="nes-pointer is-warning nes-btn" style="height: 40px; position: relative;top: -4px;" @click="userExit(),$router.go()">Выйти</div>-->
+<!--                </div>-->
 
               </div>
             </div>
@@ -29,9 +29,9 @@
             <Nuxt/>
 
             <div class="footer">
-                <div class="mx-15 logo"><span class="logo-inner">Retro</span> <br/>  Speedrun</div>
-                <div class="mx-15" @click="$router.push('/main')">Главная</div>
-                <div class="mx-15" @click="$router.push('/')">Игры</div>
+                <div class=" footer-inner mx-15 logo"><span class="logo-inner">Retro</span> <br/>  Speedrun</div>
+                <div class=" footer-inner mx-15" @click="$router.push('/main')">Главная</div>
+                <div class=" footer-inner mx-15" @click="$router.push('/')">Игры</div>
             </div>
 
           </div>
@@ -341,11 +341,20 @@ export default {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  flex-wrap: wrap;
 
   width: 100%;
   height: 80px;
 
   background: #1B1B1B;
+}
+@media (max-width: 600px) {
+  .header{
+    height: 120px;
+  }
+  .right-side{
+    margin-left: 100px ;
+  }
 }
 .left-side{
   display: flex;
@@ -379,6 +388,7 @@ export default {
   justify-content: center;
   align-items: center;
   flex-direction: row;
+  flex-wrap: wrap;
 
   font-size: smaller;
 
@@ -386,6 +396,11 @@ export default {
   padding: 20px;
 
   background: #1B1B1B;
+}
+@media (max-width: 764px) {
+  .footer-inner{
+    margin:20px;
+  }
 }
 
 </style>

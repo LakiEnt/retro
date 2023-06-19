@@ -14,7 +14,7 @@
       "Скорость возвращается: пролети через классику ретро игр!"
     </div>
 
-    <div class="img-sonic" style="width: 463px; height: 607px">
+    <div class="img-sonic">
       <img src="~static/sonic.png" style="border: 2px" >
     </div>
   </div>
@@ -27,7 +27,7 @@
     Игра дня: {{gameOfDay}}
   </div>
 
-  <div class="mb-12">
+  <div class="mb-12 lastSpeedrun">
     Последний загруженный спидран:
     <div>
       <iframe width="500" height="300" :src=lastSpeedrun title="Speedrun"  frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
@@ -76,11 +76,42 @@ export default {
 .sonic{
   position: relative;
   top:-150px;
-}
-.img-sonic{
 
+}
+
+.img-sonic{
+  width: 463px; height: 607px
+}
+@media (max-width: 768px) {
+  .img-sonic{
+    transform: scale(0.7);
+  }
 }
 .message-sonic{
   position: relative;top: 180px; left: 385px;
+}
+@media (max-width: 768px) {
+  .message-sonic{
+    position: relative;
+    transform: scale(0.7);
+    left: 300px;
+  }
+}
+@media (max-width: 700px) {
+  .message-sonic{
+    left: 140px;
+    top: 100px;
+  }
+}
+@media (max-width: 555px) {
+  .message-sonic{
+    left: 40px;
+    top: 100px;
+  }
+  .sonic{
+    left: -50px;
+  }
+  .lastSpeedrun{
+  }
 }
 </style>
