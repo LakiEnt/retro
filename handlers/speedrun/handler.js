@@ -13,6 +13,7 @@ async  function showSpeedruns(object) {
 
   const client = await pool.connect();
   try {
+    const getRowCount = await client.query(`SELECT * FROM speedruns s WHERE s."speedrunGame" = $1 AND s."speedrunStatus" = $2`, [ object.gameId, constants.speedrunStatuses.Одобрен]);
     const query = `SELECT s."speedrunId",
                           u."userNickName",
                           to_char(TO_TIMESTAMP(s."speedrunTime"::double precision / 1000), 'HH24:MI:SS.MS') AS "speedrunTime",
@@ -21,12 +22,12 @@ async  function showSpeedruns(object) {
                           s."speedrunUrl"
                    FROM speedruns s
                           INNER JOIN users u on u."userId" = s."speedrunUser"
-                          INNER JOIN games g on g."gameId" = s."speedrunGame"
-                   WHERE g."gameId" = $1 AND s."speedrunStatus" = $2
+                   WHERE s."speedrunGame" = $1 AND s."speedrunStatus" = $2
                    ORDER BY s."speedrunTime"
                    LIMIT $3 OFFSET $4`;
 
     const result = await client.query(query, params);
+    data.rowCount = getRowCount.rowCount;
     data.message = result.rows;
     data.statusCode = 200;
   } catch(err) {

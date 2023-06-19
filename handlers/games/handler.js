@@ -14,6 +14,7 @@ async function showGames(object) {
 
   const client = await pool.connect();
   try {
+    const getRowCount = await client.query(`SELECT * FROM games`, []);
     const query = `SELECT g."gameId", g."gameName", to_char(g."gameDate", 'dd.mm.yyyy') AS "gameDate", g."gameDescription", g."imageURL"
                    FROM games g
                    ORDER BY g."gameName"
@@ -36,6 +37,7 @@ async function showGames(object) {
         console.log(`Жанры для игры ${ game.gameName } (${ game.gameId }) не найдены`);
       }
     }
+    data.rowCount = getRowCount.rowCount;
     data.message = result.rows;
     data.statusCode = 200;
   } catch(err) {
