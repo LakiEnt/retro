@@ -16,9 +16,9 @@ async function auth(object) {
   const client = await pool.connect();
 
     try {
-      const query = `SELECT u."userPassword"
-               FROM users u
-               WHERE u."userNickName" = $1` ;
+      const query = `SELECT u."userId", u."userNickName", u."userPassword"
+                     FROM users u
+                     WHERE u."userNickName" = $1`;
       const result = await client.query(query, params);
 
       const isSuccess = await bcrypt.compare(password, result.rows[0].userPassword).then(function(result) {
@@ -26,8 +26,12 @@ async function auth(object) {
         return result;
       });
       if (isSuccess) {
-          data.message = 'success';
-          data.statusCode = 200;
+        data.userData = {
+          userId:  result.rows[0].userId,
+          userNickName: result.rows[0].userNickName,
+        };
+        data.message = 'success';
+        data.statusCode = 200;
       }
       else {
           data.message = 'Wrong password';
