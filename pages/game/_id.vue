@@ -251,7 +251,7 @@ export default {
       }
       try {
 
-        const response = await this.$axios.post('/api/addSpeedrun', request);
+        const response = await this.$axios.post('/api/speedrun/addSpeedrun', request);
         if(response.data.statusCode == 200){
           alert('Ваш спидран отправлен на рассмотрение')
         }
