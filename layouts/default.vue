@@ -20,7 +20,7 @@
 
                 <div v-if="isAutorise" class="header-item">
                   <img src="~static/jokerge.webp" width="60" height="60" class="pb-4">
-                  <div class="nes-pointer is-warning nes-btn" style="height: 40px; position: relative;top: -4px;" @click="$router.go()">Выйти</div>
+                  <div class="nes-pointer is-warning nes-btn" style="height: 40px; position: relative;top: -4px;" @click="userExit(),$router.go()">Выйти</div>
                 </div>
 
               </div>
@@ -180,7 +180,7 @@
                       <v-btn
                         color="orange"
                         :disabled="validReg"
-                        @click="window=0, userRegistration()"
+                        @click="window=0, userRegistration(),$router.go()"
                       >
                         <div class="nes">
                           Зарегестрироваться
@@ -252,6 +252,10 @@ export default {
     }
   },
   methods:{
+    userExit(){
+      this.isAutorise = false
+      localStorage.setItem('isAutorise', false);
+    },
     async userLogin(){
       const request = {
         nickName:this.nickname,
@@ -299,6 +303,15 @@ export default {
         this.window = 0
       }
     }
+  },
+  async created() {
+    if(localStorage.getItem('isAutorise') !== null){
+      this.isAutorise =  localStorage.getItem('isAutorise')
+    }
+    else{
+      localStorage.setItem('isAutorise',false)
+    }
+
   }
 }
 </script>
@@ -315,7 +328,7 @@ export default {
   margin: 0 auto;
 
   max-width: 905px;
-  min-height: 2250px;
+  min-height: 2385px;
 }
 .main-page{
   position: relative;

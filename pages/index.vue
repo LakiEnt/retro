@@ -5,7 +5,7 @@
     <div class="mt-5">
       <v-pagination
         v-model="page"
-        :length="5"
+        :length="pagiLenght"
         @input="updatePage"
       >
 
@@ -34,7 +34,7 @@
 
     <v-pagination
       v-model="page"
-      :length="5"
+      :length="pagiLenght"
       @input="updatePage"
       class="mt-10"
     >
@@ -53,7 +53,9 @@ export default {
     return{
       games:[],
       page:1,
-      pageSize: 16,
+      pageSize: 1,
+      pageOverall:1,
+      pagiLenght:1,
     }
   },
   methods:{
@@ -65,6 +67,11 @@ export default {
           const response = await this.$axios.post('/api/games/show', request);
           // const response = await this.$api.showGames(request)
           this.games = response.data.message
+
+          this.pageSize = response.data.limit        //лимит
+          this.pageOverall = response.data.rowCount  //всего страниц
+
+          this.pagiLenght = Math.ceil(this.pageOverall/this.pageSize)
 
           console.log(response.data.message)
         }

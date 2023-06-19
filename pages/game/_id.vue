@@ -1,5 +1,6 @@
 <template>
 <div>
+
   <v-row style="margin-top:40px">
 
     <v-col cols="auto" style="padding-left: 40px">
@@ -11,7 +12,11 @@
       </div>
     </v-col>
 
-    <v-col cols="6" sm="12" xs="12"  style="padding-left: 40px">
+    <v-col v-if="isAutorise" cols="auto" class="addSpeedrun">
+      <button type="button" class="nes-pointer nes-btn is-warning" @click="dialogAddGame = true">Добавить спидран + </button>
+    </v-col>
+
+    <v-row style="padding-left: 50px">
       <div class="flex flex-column">
         <div class="pa-1 mt-3">
           <strong> Название: </strong> {{game.gameName}}
@@ -19,16 +24,16 @@
         <div class="pa-1 mt-3">
           <strong> Дата выпуска: </strong>  {{game.gameDate}}
         </div>
-        <div class="pa-1 mt-3">
+        <div class="mt-3" style=" padding-right: 40px; padding-left: 4px">
 
           <div v-if="!gameDescriptionOpen">
-            <strong> Описание: </strong>  {{gameDescription}}...
+            <strong> Описание: </strong>  <span style="font-size: smaller;">{{gameDescription}}...</span>
             <br/>
             <strong style="text-decoration: underline" @click="gameDescriptionOpen = true"> Нажмите чтобы раскрыть</strong>
           </div>
 
           <div v-else>
-            <strong> Описание: </strong>  {{game.gameDescription}}
+            <strong> Описание: </strong> <span style="font-size: smaller;">{{game.gameDescription}}</span>
             <br/>
             <strong style="text-decoration: underline" @click="gameDescriptionOpen = false"> Нажмите чтобы скрыть</strong>
           </div>
@@ -41,7 +46,7 @@
           </span>
         </div>
       </div>
-    </v-col>
+    </v-row>
 
   </v-row>
 
@@ -51,7 +56,7 @@
 
       <v-pagination
         v-model="page"
-        :length="5"
+        :length="pagiLenght"
         @input="updatePage"
       >
       </v-pagination>
@@ -84,7 +89,7 @@
 
       <v-pagination
         v-model="page"
-        :length="5"
+        :length="pagiLenght"
         @input="updatePage"
       >
       </v-pagination>
@@ -92,7 +97,6 @@
   </v-row>
   <v-dialog class="dialog" v-model="dialog" max-width='900'>
     <v-card class="pa-10">
-
       <v-row>
         <v-col cols="auto" >
           <div>
@@ -101,7 +105,7 @@
           </div>
         </v-col>
 
-        <v-col class="ml-10 pl-10" cols="auto" >
+        <v-col class="ml-10 pl-10" cols="auto">
           <div>
             <h2>Информация о спидране:</h2>
             <v-row>
@@ -116,7 +120,28 @@
           </div>
         </v-col>
       </v-row>
+    </v-card>
+  </v-dialog>
 
+
+  <v-dialog class="dialog" v-model="dialogAddGame" max-width='900'>
+    <v-card class="pa-10">
+      <v-card-text>
+        <h2 class="nes">Добавление спидрана</h2>
+
+        <div class="nes-field">
+          <label for="name_field" class="nes">Ссылка на ютуб:</label>
+          <input type="text" id="name_field" class="nes-input" v-model="link">
+        </div>
+
+        <div class="nes-field">
+          <label for="name_field" class="nes">Ваше время:</label>
+          <input type="text" id="name_field" class="nes-input" v-model="timeUser">
+        </div>
+      </v-card-text>
+      <v-card-actions>
+        <v-btn :disabled="disableBtn"  class="nes nes-btn is-warning nes-pointer" @click="addSpeedrun()">Отправить на рассмотрение</v-btn>
+      </v-card-actions>
 
     </v-card>
   </v-dialog>
@@ -128,6 +153,10 @@ export default {
   name: "gameID",
   data(){
     return{
+      link:'',
+      timeUser:'',
+      dialogAddGame:false,
+      isAutorise:false,
       game:{},
       gameDescription:'',
       gameDescriptionOpen: false,
@@ -158,6 +187,11 @@ export default {
           value: 'userCountry',
         },
       ],
+
+      pageSize: 1,
+      pageOverall:1,
+      pagiLenght:1,
+
     }
   },
   methods:{
@@ -193,6 +227,11 @@ export default {
 
         this.speedruns = response.data.message
 
+        this.pageSize = response.data.limit        //лимит
+        this.pageOverall = response.data.rowCount  //всего страниц
+
+        this.pagiLenght = Math.ceil(this.pageOverall/this.pageSize)
+
         console.log(response)
       }
       catch(err) {
@@ -201,8 +240,34 @@ export default {
     },
     async updatePage(){
       await this.getGameSpeedrun()
+
+    },
+    async addSpeedrun(){
+      const request = {
+        "speedrunUser": 'LakiEnt',
+        'speedrunGame': this.$route.params.id,
+        'speedrunTime': this.timeUser,
+        'speedrunUrl' : this.link,
+      }
+      try {
+
+        const response = await this.$axios.post('/api/addSpeedrun', request);
+        if(response.data.statusCode == 200){
+          alert('Ваш спидран отправлен на рассмотрение')
+        }
+        console.log(response)
+      }
+      catch(err) {
+        console.error(err)
+        alert('Произошла ошибка')
+      }
     }
 
+  },
+  computed:{
+    disableBtn(){
+      return this.link.length > 0 && this.timeUser.length > 0 ? false : true
+    },
   },
   watch:{
     dialog:function(dialog, old){
@@ -213,11 +278,29 @@ export default {
   },
   async created(){
     await this.getGame()
-    await  this.getGameSpeedrun()
+    await this.getGameSpeedrun()
+
+    if(localStorage.getItem('isAutorise')!==null){
+      this.isAutorise =  localStorage.getItem('isAutorise')
+    }
+    else{
+      localStorage.setItem('isAutorise',false)
+    }
   }
 }
 
 </script>
 
 <style scoped>
+.nes{
+  font-family: 'Press Start 2P'!important;
+}
+.addSpeedrun{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding-left: 40px;
+  padding-bottom: 40px;
+
+}
 </style>

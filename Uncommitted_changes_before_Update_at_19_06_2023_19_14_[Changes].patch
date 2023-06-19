@@ -1,0 +1,792 @@
+Index: layouts/default.vue
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/layouts/default.vue b/layouts/default.vue
+--- a/layouts/default.vue
++++ b/layouts/default.vue
+@@ -6,15 +6,34 @@
+           <div class="main-page">
+             <div class="header">
+               <div class="left-side">
+-                <div class="nes-text header-item" @click="$router.push('/main')">Главная</div>
+-                <div class="header-item" @click="$router.push('/')">Игры</div>
+-                <div class="header-item" @click="$router.push('/news')">Новости</div>
++                <div>
++                  <div class="logo nes-text pl-10"><span class="logo-inner">Retro</span> <br/>  Speedrun</div>
++                </div>
+               </div>
+               <div class="right-side">
+-                <div class="header-item" @click="dialog = true">Войти</div>
++                <div class="nes-pointer is-warning  nes-btn" @click="$router.push('/main')">Главная</div>
++                <div class="nes-pointer is-warning  nes-btn" @click="$router.push('/')">Игры</div>
++
++
++
++                <div v-if="!isAutorise" class="nes-pointer is-warning nes-btn" style="margin-right:40px" @click="dialog = true">Войти</div>
++
++                <div v-if="isAutorise" class="header-item">
++                  <img src="~static/jokerge.webp" width="60" height="60" class="pb-4">
++                  <div class="nes-pointer is-warning nes-btn" style="height: 40px; position: relative;top: -4px;" @click="$router.go()">Выйти</div>
++                </div>
++
+               </div>
+             </div>
++
+             <Nuxt/>
++
++            <div class="footer">
++                <div class="mx-15 logo"><span class="logo-inner">Retro</span> <br/>  Speedrun</div>
++                <div class="mx-15" @click="$router.push('/main')">Главная</div>
++                <div class="mx-15" @click="$router.push('/')">Игры</div>
++            </div>
++
+           </div>
+         </div>
+         <v-dialog v-model="dialog" width="auto">
+@@ -25,11 +44,13 @@
+             <v-window-item>
+               <v-card style="width: 600px; padding: 20px">
+                 <v-card-title>
+-                  Авторизация
++                  <div class="nes">
++                    Авторизация
++                  </div>
+                 </v-card-title>
+
+                 <v-card-text>
+-                  <v-form>
++                  <v-form v-model="validAuto">
+                     <v-text-field
+                       v-model="nickname"
+                       :counter="25"
+@@ -39,6 +60,9 @@
+                     <v-text-field
+                       v-model="password"
+                       :counter="25"
++                      :append-icon="show1 ? 'mdi-eye' : 'mdi-eye-off'"
++                      :type="show1 ? 'text1' : 'password'"
++                      @click:append="show1 = !show1"
+                       label="Пароль"
+                     >
+
+@@ -51,7 +75,8 @@
+                     <v-col cols="4">
+                       <v-btn
+                         color="orange"
+-                        @click="dialog=false, userLogin()"
++                        @click="dialog=false, userLogin(), nickname='', password=''"
++                        :disabled="validAuto"
+                       >
+                         Авторизоваться
+                       </v-btn>
+@@ -79,59 +104,87 @@
+             <v-window-item>
+               <v-card style="width: 600px; padding: 20px">
+                 <v-card-title>
+-                  Регистрация
++                  <div class="nes">
++                    Регистрация
++                  </div>
+                 </v-card-title>
+
+                 <v-card-text>
+                   <v-form>
+                     <v-text-field
+-                      v-model="nickname"
++                      class="nes-input"
++                      v-model="nicknameNew"
+                       :counter="25"
++                      :rules="[rules.required]"
+                       label="Придумайте никнейм"
+                     ></v-text-field>
+
+                     <v-text-field
+-                      v-model="password"
++                      class="nes-input"
++                      v-model="passwordNew"
+                       :counter="25"
++                      :rules="[rules.required]"
++
++                      :append-icon="show2 ? 'mdi-eye' : 'mdi-eye-off'"
++                      :type="show2 ? 'text2' : 'password'"
++                      @click:append="show2 = !show2"
++
+                       label="Придумайте пароль"
+                     >
+
+                     </v-text-field>
+
+                     <v-text-field
++                      class="nes-input"
+                       v-model="passwordConfirm"
+                       :counter="25"
++                      :rules="[rules.required,rules.passwordConfirm]"
++
++                      :append-icon="show3 ? 'mdi-eye' : 'mdi-eye-off'"
++                      :type="show3 ? 'text3' : 'password'"
++                      @click:append="show3 = !show3"
++
+                       label="Повторите пароль"
+                     >
+
+                     </v-text-field>
+
+                     <v-text-field
++                      class="nes-input"
+                       v-model="email"
+                       :counter="25"
++                      :rules="[rules.required, rules.email]"
+                       label="Введите свою почту"
+                     >
+
+                     </v-text-field>
+
+-                    <v-text-field
++                    <v-select
++                      class="nes-input"
+                       v-model="country"
+-                      :counter="25"
++                      :items="countrySelect"
++                      :rules="[rules.required]"
++                      item-text="countryText"
++                      item-value="countryValue"
+                       label="Введите свою страну"
+                     >
+
+-                    </v-text-field>
++                    </v-select>
+                   </v-form>
++
+                 </v-card-text>
+
+                 <v-card-actions>
+                   <v-row class="justify-center">
+-                    <v-col cols="4">
++                    <v-col cols="auto">
+                       <v-btn
+                         color="orange"
+-                        @click="dialog=false, window=0, userRegistration()"
++                        :disabled="validReg"
++                        @click="window=0, userRegistration()"
+                       >
+-                        Зарегестрироваться
++                        <div class="nes">
++                          Зарегестрироваться
++                        </div>
+                       </v-btn>
+                     </v-col>
+                   </v-row>
+@@ -146,6 +199,7 @@
+
+         </v-dialog>
+       </div>
++
+     </v-main>
+   </v-app>
+ </template>
+@@ -155,13 +209,46 @@
+   name: 'DefaultLayout',
+   data () {
+     return {
++      isAutorise: false,
+       dialog: false,
+       window:0,
++
+       nickname:'',
+       password:'',
++
++      nicknameNew:'',
++
++      passwordNew:'',
+       passwordConfirm:'',
++
+       email:'',
+       country:'',
++
++      countrySelect:[
++        {
++          countryText:'Россия', countryValue:'Russia'
++        },
++        {
++          countryText:'США', countryValue:'USA'
++        },
++        {
++          countryText:'Китай', countryValue:'China'
++        },
++        {
++          countryText:'Асгардия', countryValue:'Asgardia'
++        },
++      ],
++      rules: {
++        passwordConfirm: value => value == this.passwordNew || 'Пароли не совпадают',
++        required: value => !!value || 'Поле обязательно.',
++        email: value => {
++          const pattern = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
++          return pattern.test(value) || 'Неверный адрес электронной почты.'
++        },
++      },
++      show1: false,
++      show2: false,
++      show3: false,
+     }
+   },
+   methods:{
+@@ -172,6 +259,10 @@
+       }
+       try {
+         const response = await this.$axios.post('/api/auth/login', request);
++        if(response.data.statusCode == 200){
++          this.isAutorise = true
++          localStorage.setItem('isAutorise', true);
++        }
+         console.log(response)
+       }
+       catch(err) {
+@@ -180,8 +271,8 @@
+     },
+     async userRegistration(){
+       const request = {
+-        userNickName:  this.nickname,
+-        userPassword:  this.password,
++        userNickName:  this.nicknameNew,
++        userPassword:  this.passwordNew,
+         userEmail:     this.email,
+         userCountry:   this.country,
+       }
+@@ -194,6 +285,14 @@
+       }
+     }
+   },
++  computed:{
++    validAuto(){
++      return this.nickname.length > 0 && this.password.length > 0 ? false : true
++    },
++    validReg(){
++      return (this.passwordNew == this.passwordConfirm) && (this.nicknameNew.length > 0 && this.passwordNew.length > 0 && this.email.length > 0 && this.country.length > 0) && (/^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/.test(this.email)) ? false : true
++    }
++  },
+   watch:{
+     dialog:function(dialog, old){
+       if(!this.dialog){
+@@ -206,22 +305,23 @@
+ <style lang="scss">
+ .body{
+   margin: 0;
+-  height: 1962px;
+   background: url("../static/main-wallpaper.png") no-repeat fixed;
+   background-size:cover;
+   position: sticky;
++
++  font-family: 'Press Start 2P'!important;
+ }
+ .container{
+   margin: 0 auto;
+-  height: 100%;
++
+   max-width: 905px;
++  min-height: 2250px;
+ }
+ .main-page{
+   position: relative;
+   top:200px;
+
+   width: 100%;
+-  min-height: 1500px;
+   background: rgba(167, 82, 3, 0.9);
+ }
+ .header{
+@@ -243,6 +343,7 @@
+   justify-content: space-between;
+ }
+ .header-item {
++  max-height: 40px;
+   font-size: smaller;
+   color: white;
+   margin: 0 20px 0 20px;
+@@ -251,6 +352,27 @@
+     cursor: pointer;
+   }
+ }
++.logo{
++  padding: 0px 20px 0 20px;
++}
++.logo-inner{
++  color: red
++}
++.nes{
++  font-family: 'Press Start 2P'!important;
++}
++.footer{
++  display: flex;
++  justify-content: center;
++  align-items: center;
++  flex-direction: row;
++
++  font-size: smaller;
+
++  margin-top: 100px;
++  padding: 20px;
++
++  background: #1B1B1B;
++}
+
+ </style>
+Index: pages/index.vue
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/pages/index.vue b/pages/index.vue
+--- a/pages/index.vue
++++ b/pages/index.vue
+@@ -36,6 +36,7 @@
+       v-model="page"
+       :length="5"
+       @input="updatePage"
++      class="mt-10"
+     >
+
+     </v-pagination>
+Index: pages/game/_id.vue
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/pages/game/_id.vue b/pages/game/_id.vue
+--- a/pages/game/_id.vue
++++ b/pages/game/_id.vue
+@@ -90,7 +90,7 @@
+       </v-pagination>
+     </v-col>
+   </v-row>
+-  <v-dialog v-model="dialog" max-width='900'>
++  <v-dialog class="dialog" v-model="dialog" max-width='900'>
+     <v-card class="pa-10">
+
+       <v-row>
+@@ -220,5 +220,4 @@
+ </script>
+
+ <style scoped>
+-
+ </style>
+Index: pages/main.vue
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/pages/main.vue b/pages/main.vue
+--- a/pages/main.vue
++++ b/pages/main.vue
+@@ -1,15 +1,61 @@
+ <template>
+-<div>
+-  <h1>Ретро спидран -  это сайт созданный для того чтобы собрать внутри себя спидраннеров наших любимых игр!</h1>
++<div style="padding: 40px">
++
++  <div class="mb-12">
++    <p>Добро пожаловать на наш сайт, посвященный скоростным прохождениям ретро игр! Мы создали этот ресурс для любителей старых игровых шедевров, которые стремятся преодолеть их на максимальной скорости.</p>
++    <p>Здесь вы найдете подробные руководства, техники и секреты, помогающие достичь невероятных результатов в ретро играх.</p>
++    <p>Бросьте вызов собственным рекордам и сравнитесь с другими игроками по всему миру. Подготовьтесь к волнующему погружению в прошлое и ощутите адреналин быстрых прохождений ретро игр нашего времени.</p>
++    <p>Присоединяйтесь к нашему сообществу и станьте частью этой захватывающей скоростной игровой культуры!</p>
++  </div>
++
++  <div class="sonic mb-12">
++
++    <div class="message-sonic nes-balloon from-left is-dark rounded" style="width: 400px">
++      "Скорость возвращается: пролети через классику ретро игр!"
++    </div>
++
++    <div class="img-sonic" style="width: 463px; height: 607px">
++      <img src="~static/sonic.png" style="border: 2px" >
++    </div>
++  </div>
++
++
++  <div class="mb-12">
++    Последний загруженный спидран:
++  </div>
++
++  <div class="mb-12">
++    Количество доступных игр на сайте: {попросить антона сделать}
++  </div>
++
++  <div class="mb-12">
++    Игра дня:
++  </div>
++
++  <div class="mb-12">
++    Последний загруженный спилдран:
++  </div>
++
++
++
+ </div>
+ </template>
+
+ <script>
+ export default {
+-  name: "main"
++  name: "mainPage"
+ }
+ </script>
+
+ <style scoped>
++.sonic{
++  position: relative;
++  top:-150px;
++}
++.img-sonic{
+
++}
++.message-sonic{
++  position: relative;top: 180px; left: 385px;
++}
+ </style>
+Index: pages/news.vue
+===================================================================
+diff --git a/pages/news.vue b/pages/news.vue
+deleted file mode 100644
+--- a/pages/news.vue
++++ /dev/null
+@@ -1,15 +0,0 @@
+-<template>
+-<div>
+-  <H1>NEWS</H1>
+-</div>
+-</template>
+-
+-<script>
+-export default {
+-  name: "news"
+-}
+-</script>
+-
+-<style scoped>
+-
+-</style>
+diff --git a/static/jokerge.webp b/static/jokerge.webp
+new file mode 100644
+index 0000000000000000000000000000000000000000..0bedb66fd9f50a025e5edc8b46eea14fb8a2a105
+GIT binary patch
+literal 10162
+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
+
+diff --git a/static/sonic.png b/static/sonic.png
+new file mode 100644
+index 0000000000000000000000000000000000000000..8f7cdbab3fe4919fb7c4df56b2e64c803e9e1b6b
+GIT binary patch
+literal 8752
+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
+R;o7d~IvNJ*1*$h6{SPQW3TyxX
+
