@@ -43,7 +43,29 @@
 
 <script>
 export default {
-  name: "mainPage"
+  name: "mainPage",
+  data(){
+    return{
+      lastSpeedrun:'',
+      gamesCount:'',
+      gameOfDate:'',
+    }
+  },
+  methods:{
+    async getMain(){
+      try {
+        const response = await this.$axios.get('/api/landing/show');
+
+        console.log(response)
+      }
+      catch(err) {
+        console.error(err)
+      }
+    },
+  },
+  async created(){
+    await this.getMain()
+  }
 }
 </script>
 
