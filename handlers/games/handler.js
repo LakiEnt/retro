@@ -37,6 +37,8 @@ async function showGames(object) {
         console.log(`Жанры для игры ${ game.gameName } (${ game.gameId }) не найдены`);
       }
     }
+
+    data.limit = limit;
     data.rowCount = getRowCount.rowCount;
     data.message = result.rows;
     data.statusCode = 200;

@@ -27,6 +27,7 @@ async  function showSpeedruns(object) {
                    LIMIT $3 OFFSET $4`;
 
     const result = await client.query(query, params);
+    data.limit = limit;
     data.rowCount = getRowCount.rowCount;
     data.message = result.rows;
     data.statusCode = 200;
