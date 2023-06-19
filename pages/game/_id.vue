@@ -90,7 +90,7 @@
       </v-pagination>
     </v-col>
   </v-row>
-  <v-dialog v-model="dialog" max-width='900'>
+  <v-dialog class="dialog" v-model="dialog" max-width='900'>
     <v-card class="pa-10">
 
       <v-row>
@@ -220,5 +220,4 @@ export default {
 </script>
 
 <style scoped>
-
 </style>

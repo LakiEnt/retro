@@ -36,6 +36,7 @@
       v-model="page"
       :length="5"
       @input="updatePage"
+      class="mt-10"
     >
 
     </v-pagination>
