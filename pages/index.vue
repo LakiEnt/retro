@@ -65,6 +65,7 @@ export default {
           const response = await this.$axios.post('/api/games/show', request);
           // const response = await this.$api.showGames(request)
           this.games = response.data.message
+
           console.log(response.data.message)
         }
         catch(err) {

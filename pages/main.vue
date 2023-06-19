@@ -19,21 +19,19 @@
     </div>
   </div>
 
+  <div class="mb-12">
+    Количество доступных игр на сайте: {{gamesCount}}
+  </div>
+
+  <div class="mb-12 text-decoration-underline">
+    Игра дня: {{gameOfDay}}
+  </div>
 
   <div class="mb-12">
     Последний загруженный спидран:
-  </div>
-
-  <div class="mb-12">
-    Количество доступных игр на сайте: {попросить антона сделать}
-  </div>
-
-  <div class="mb-12">
-    Игра дня:
-  </div>
-
-  <div class="mb-12">
-    Последний загруженный спилдран:
+    <div>
+      <iframe width="500" height="300" :src=lastSpeedrun title="Speedrun"  frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+    </div>
   </div>
 
 
@@ -48,15 +46,20 @@ export default {
     return{
       lastSpeedrun:'',
       gamesCount:'',
-      gameOfDate:'',
+      gameOfDay:'',
     }
   },
   methods:{
     async getMain(){
       try {
         const response = await this.$axios.get('/api/landing/show');
+        const data = response.data.message
 
-        console.log(response)
+        this.lastSpeedrun = data.lastSpeedRun.speedrunUrl
+        this.gamesCount = data.allGamesCount
+        this.gameOfDay = data.gameOfDay.gameName
+
+        console.log(data)
       }
       catch(err) {
         console.error(err)
