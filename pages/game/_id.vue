@@ -12,13 +12,13 @@
       </div>
     </v-col>
 
-<!--    <v-col v-if="isAutorise" cols="auto" class="addSpeedrun">-->
-<!--      <button type="button" class="nes-pointer nes-btn is-warning" @click="dialogAddGame = true">Добавить спидран + </button>-->
-<!--    </v-col>-->
-
-    <v-col cols="auto" class="addSpeedrun">
+    <v-col v-if="isAutorise" cols="auto" class="addSpeedrun">
       <button type="button" class="nes-pointer nes-btn is-warning" @click="dialogAddGame = true">Добавить спидран + </button>
     </v-col>
+
+<!--    <v-col cols="auto" class="addSpeedrun">-->
+<!--      <button type="button" class="nes-pointer nes-btn is-warning" @click="dialogAddGame = true">Добавить спидран + </button>-->
+<!--    </v-col>-->
 
     <v-row style="padding-left: 50px">
       <div class="flex flex-column">
@@ -134,13 +134,40 @@
         <h2 class="nes">Добавление спидрана</h2>
 
         <div class="nes-field">
-          <label for="name_field" class="nes">Ссылка на ютуб:</label>
-          <input type="text" id="name_field" class="nes-input" v-model="link">
+<!--          <label for="name_field" class="nes">Ссылка на ютуб:</label>-->
+<!--          <input type="text" id="name_field" class="nes-input" v-model="link">-->
+          <v-text-field label="Ссылка на ютуб:" v-model="link" :rules="[rules.required]">
+
+          </v-text-field>
         </div>
 
         <div class="nes-field">
-          <label for="name_field" class="nes">Ваше время:</label>
-          <input type="text" id="name_field" class="nes-input" v-model="timeUser">
+<!--          <label for="name_field" class="nes">Ваше время:</label>-->
+<!--          <input type="text" id="name_field" class="nes-input" v-model="timeUser">-->
+          <v-row>
+            <v-col cols="3">
+              <v-text-field label="Часы" v-model="timeUser.hours" :rules="[rules.required, rules.hours, rules.lessthousand ]">
+
+              </v-text-field>
+            </v-col>
+            <v-col cols="3">
+              <v-text-field label="Минуты" v-model="timeUser.minutes" :rules="[rules.required, rules.hours, rules.minutes ]">
+
+              </v-text-field>
+            </v-col>
+            <v-col cols="3">
+              <v-text-field label="Секунды" v-model="timeUser.secs" :rules="[rules.required, rules.hours, rules.secs]">
+
+              </v-text-field>
+            </v-col>
+            <v-col cols="3">
+              <v-text-field label="Милисекунды" v-model="timeUser.milisecs":rules="[rules.required, rules.hours, rules.milisecs]">
+
+              </v-text-field>
+            </v-col>
+          </v-row>
+
+
         </div>
       </v-card-text>
       <v-card-actions>
@@ -157,8 +184,14 @@ export default {
   name: "gameID",
   data(){
     return{
+      ID:'',
       link:'',
-      timeUser:'',
+      timeUser:{
+        hours:'',
+        minutes:'',
+        secs:'',
+        milisecs:'',
+      },
       dialogAddGame:false,
       isAutorise:false,
       game:{},
@@ -191,6 +224,17 @@ export default {
           value: 'userCountry',
         },
       ],
+      rules: {
+        required: value => !!value || 'Поле обязательно.',
+        hours: value => {
+          const pattern = /^\d{1,}$/
+          return pattern.test(value)  || 'Введите число.'
+        },
+        lessthousand: value => value < 1000 || 'Введите число меньше 1000',
+        minutes:value => value < 60 || 'Не может быть больше 60 минут',
+        secs:value => value < 60 || 'Не может быть больше 60 секунд',
+        milisecs:value => value < 1000 || 'Не может быть больше 1000 милисекунд',
+      },
 
       pageSize: 1,
       pageOverall:1,
@@ -231,8 +275,8 @@ export default {
 
         this.speedruns = response.data.message
 
-        this.pageSize = response.data.limit        //лимит
-        this.pageOverall = response.data.rowCount  //всего страниц
+        this.pageSize = response.data.limit
+        this.pageOverall = response.data.rowCount
 
         this.pagiLenght = Math.ceil(this.pageOverall/this.pageSize)
 
@@ -247,15 +291,19 @@ export default {
 
     },
     async addSpeedrun(){
+
+      const AllTime = this.timeUser.hours * 3600000 + this.timeUser.minutes * 60000 + this.timeUser.secs * 1000 + this.timeUser.milisecs
+
       const request = {
-        "speedrunUser": 'LakiEnt',
+        "speedrunUser": this.ID,
         'speedrunGame': this.$route.params.id,
-        'speedrunTime': this.timeUser,
+        'speedrunTime': AllTime,
         'speedrunUrl' : this.link,
       }
       try {
-
         const response = await this.$axios.post('/api/speedrun/addSpeedrun', request);
+
+
         if(response.data.statusCode == 200){
           alert('Ваш спидран отправлен на рассмотрение')
         }
@@ -265,12 +313,23 @@ export default {
         console.error(err)
         alert('Произошла ошибка')
       }
-    }
+    },
+    getInfoFromLocalStorage(){
+      if(localStorage.getItem('nickname') !== null ){
+        this.nicknameToShow = localStorage.getItem('nickname')
+      }
+      if(localStorage.getItem('id') !== null ){
+        this.ID =localStorage.getItem('id',)
+      }
+      if(localStorage.getItem('isAutorise') !== null ){
+        this.isAutorise =localStorage.getItem('isAutorise')
+      }
+    },
 
   },
   computed:{
     disableBtn(){
-      return this.link.length > 0 && this.timeUser.length > 0 ? false : true
+      return this.link.length > 0 && this.timeUser.hours.length > 0 && this.timeUser.minutes.length > 0 && this.timeUser.secs.length > 0 && this.timeUser.milisecs.length > 0? false : true
     },
   },
   watch:{
@@ -284,12 +343,7 @@ export default {
     await this.getGame()
     await this.getGameSpeedrun()
 
-    if(localStorage.getItem('isAutorise')!==null){
-      this.isAutorise =  localStorage.getItem('isAutorise')
-    }
-    else{
-      localStorage.setItem('isAutorise',false)
-    }
+    this.getInfoFromLocalStorage()
   }
 }
 

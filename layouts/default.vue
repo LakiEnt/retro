@@ -14,14 +14,15 @@
                 <div class="nes-pointer is-warning  nes-btn" @click="$router.push('/main')">Главная</div>
                 <div class="nes-pointer is-warning  nes-btn" @click="$router.push('/')">Игры</div>
 
-                <div class="nes-pointer is-warning nes-btn" style="margin-right:40px" @click="dialog = true">Войти</div>
+<!--                <div class="nes-pointer is-warning nes-btn" style="margin-right:40px" @click="dialog = true">Войти</div>-->
 
-<!--                <div v-if="!isAutorise" class="nes-pointer is-warning nes-btn" style="margin-right:40px" @click="dialog = true">Войти</div>-->
+                <div v-if="!isAutorise" class="nes-pointer is-warning nes-btn" style="margin-right:40px" @click="dialog = true">Войти</div>
 
-<!--                <div v-if="isAutorise" class="header-item">-->
-<!--                  <img src="~static/jokerge.webp" width="60" height="60" class="pb-4">-->
-<!--                  <div class="nes-pointer is-warning nes-btn" style="height: 40px; position: relative;top: -4px;" @click="userExit(),$router.go()">Выйти</div>-->
-<!--                </div>-->
+                <div v-if="isAutorise" class="header-item">
+                  {{nicknameToShow}}
+                  <img src="~static/jokerge.webp" width="60" height="60" class="pb-4">
+                  <div class="nes-pointer is-warning nes-btn" style="height: 40px; position: relative;top: -4px;" @click="userExit(),$router.go()">Выйти</div>
+                </div>
 
               </div>
             </div>
@@ -209,6 +210,8 @@ export default {
   name: 'DefaultLayout',
   data () {
     return {
+      ID:'',
+      nicknameToShow:'',
       isAutorise: false,
       dialog: false,
       window:0,
@@ -254,7 +257,9 @@ export default {
   methods:{
     userExit(){
       this.isAutorise = false
-      localStorage.setItem('isAutorise', false);
+      localStorage.removeItem('isAutorise');
+      localStorage.removeItem("nickname")
+      localStorage.removeItem('id')
     },
     async userLogin(){
       const request = {
@@ -263,10 +268,18 @@ export default {
       }
       try {
         const response = await this.$axios.post('/api/auth/login', request);
+
+        this.nicknameToShow = response.data.userData.userNickName
+        this.ID = response.data.userData.userId
+
+        localStorage.setItem('nickname', this.nicknameToShow)
+        localStorage.setItem('id', this.ID)
+
         if(response.data.statusCode == 200){
           this.isAutorise = true
           localStorage.setItem('isAutorise', true);
         }
+        this.$router.go('/')
         console.log(response)
       }
       catch(err) {
@@ -287,6 +300,17 @@ export default {
       catch(err) {
         console.error(err)
       }
+    },
+    getInfoFromLocalStorage(){
+      if(localStorage.getItem('nickname') !== null ){
+        this.nicknameToShow =localStorage.getItem('nickname')
+      }
+      if(localStorage.getItem('id') !== null ){
+        this.ID =localStorage.getItem('id',)
+      }
+      if(localStorage.getItem('isAutorise') !== null ){
+        this.isAutorise =localStorage.getItem('isAutorise')
+      }
     }
   },
   computed:{
@@ -302,16 +326,10 @@ export default {
       if(!this.dialog){
         this.window = 0
       }
-    }
+    },
   },
   async created() {
-    if(localStorage.getItem('isAutorise') !== null){
-      this.isAutorise =  localStorage.getItem('isAutorise')
-    }
-    else{
-      localStorage.setItem('isAutorise',false)
-    }
-
+    this.getInfoFromLocalStorage()
   }
 }
 </script>

@@ -68,8 +68,8 @@ export default {
           // const response = await this.$api.showGames(request)
           this.games = response.data.message
 
-          this.pageSize = response.data.limit        //лимит
-          this.pageOverall = response.data.rowCount  //всего страниц
+          this.pageSize = response.data.limit
+          this.pageOverall = response.data.rowCount
 
           this.pagiLenght = Math.ceil(this.pageOverall/this.pageSize)
 
