@@ -181,7 +181,7 @@
                       <v-btn
                         color="orange"
                         :disabled="validReg"
-                        @click="window=0, userRegistration(),$router.go()"
+                        @click="userRegistration()"
                       >
                         <div class="nes">
                           Зарегестрироваться
@@ -295,6 +295,14 @@ export default {
       }
       try {
         const response = await this.$axios.post('/api/auth/register', request);
+        if(response.data.statusCode == 400){
+          alert('Почта занята')
+        }
+        else {
+          alert('Регистрация прошла успешно! Отвветьте на письмо которое пришло к вам на почту')
+        }
+
+
         console.log(response)
       }
       catch(err) {
